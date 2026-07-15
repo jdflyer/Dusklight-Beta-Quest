@@ -4,7 +4,7 @@ project(my_mod CXX)
 # The Dusklight version to build against: a release tag (e.g. "v1.5.0") or a commit SHA.
 # To update your mod to a newer Dusklight version, change this line and reconfigure.
 if (NOT DUSKLIGHT_VERSION)
-    set(DUSKLIGHT_VERSION "e9ebb174f12603d43e2495c00e2964b482577edd")
+    set(DUSKLIGHT_VERSION "76b56cd8b81809fce0a5c2a44e2f6d437591132f")
 endif ()
 
 # Fetches the Dusklight sources into ./dusklight and provides DUSKLIGHT_DIR.
