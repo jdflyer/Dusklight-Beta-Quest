@@ -1,7 +1,7 @@
 {
-  "id": "com.example.my_mod",
-  "name": "My Mod",
+  "id": "dev.jdflyer.betaquest",
+  "name": "Beta Quest",
   "version": "1.0.0",
   "author": "You",
-  "description": "An example Dusklight mod"
+  "description": "A no-logic entrance randomizer"
 }
