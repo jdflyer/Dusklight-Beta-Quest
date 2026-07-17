@@ -1,46 +1,23 @@
-# Dusklight Mod Template
+# Dusklight Beta Quest
 
-A standalone template for [Dusklight](https://github.com/TwilitRealm/dusklight) mods.
-
-See the [Dusklight modding documentation](https://github.com/TwilitRealm/dusklight/blob/main/docs/modding.md)
-for the full mod API: services, hooking game functions, asset overlays, and more.
+An entrance randomizer mod for dusklight
 
 ## Quick start
 
-1. Click "Use this template" to create a new repository for your mod.
-2. Edit `mod.json`: set your mod's `id` (reverse-DNS style, e.g. `com.example.my_mod`),
-   `name`, `author`, and `description`.
-3. Rename the target in `CMakeLists.txt` (`add_mod(my_mod ...)`) (this names the `.dusk` file).
-4. Write your mod in `src/mod.cpp`.
-5. Build locally:
+1. Clone the repository
+2. Build locally:
    ```sh
    cmake -B build
    cmake --build build
    ```
 
-The result is `build/mods/<name>.dusk`. Copy it into the game's mods folder to try it:
+The result is `build/mods/beta-quest.dusk`. Copy it into the game's mods folder to try it:
 
 - Windows: `%APPDATA%\TwilitRealm\Dusklight\mods`
 - Linux: `~/.local/share/TwilitRealm/Dusklight/mods`
 - macOS: `~/Library/Application Support/TwilitRealm/Dusklight/mods`
 
 During development, rebuild, copy and click **Reload** in the in-game mod manager to pick up changes.
-
-> [!IMPORTANT]
-> A mod built locally will only be valid for your own platform, and shouldn't be distributed.
-> The repository will build a [cross-platform bundle](#github-actions) for distribution. See below.
-
-## Updating to a new Dusklight version
-
-Change the `DUSKLIGHT_VERSION` line in `CMakeLists.txt` to the new release tag (or commit hash) and reconfigure. The
-pinned version is fetched into `dusklight/` automatically. Use the `dusklight/` checkout to browse game code, headers
-and mod services.
-
-> [!IMPORTANT]
-> The Dusklight checkout is for **reference only**. Mods use
-> [services](https://github.com/TwilitRealm/dusklight/blob/main/docs/modding.md#built-in-services) and
-> [hooks](https://github.com/TwilitRealm/dusklight/blob/main/docs/modding.md#hooking-game-functions) to interact with
-> game code.
 
 ## GitHub Actions
 
