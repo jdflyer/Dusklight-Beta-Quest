@@ -22,7 +22,13 @@ bool betaQuestRunning = true;
 // Example game hook: turn heart drops into green rupees.
 
 // Use the mangled name because it's overloaded :(
-DEFINE_HOOK_SYMBOL("_Z21dComIfGp_setNextStagePKcsaafjiasii",
+#ifdef _WIN32
+#define setNextStage_sig "?dComIfGp_setNextStage@@YAXPEBDFCCMIHCFHH@Z"
+#else
+#define setNextStage_sig "_Z21dComIfGp_setNextStagePKcsaafjiasii"
+#endif
+
+DEFINE_HOOK_SYMBOL(setNextStage_sig,
                    void(char const *, s16, s8, s8, f32, u32, int, s8, s16, int, int), setNextStage);
 
 DEFINE_HOOK_SYMBOL("dSv_info_c::init", void(dSv_info_init *), dSv_info_init);
