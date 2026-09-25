@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 23)
 # The Dusklight version to build against: a release tag (e.g. "v1.5.0") or a commit SHA.
 # To update your mod to a newer Dusklight version, change this line and reconfigure.
 if (NOT DUSKLIGHT_VERSION)
-    set(DUSKLIGHT_VERSION "2.0.1")
+    set(DUSKLIGHT_VERSION "v2.0.2")
 endif ()
 
 # Fetches the Dusklight sources into ./dusklight and provides DUSKLIGHT_DIR.
