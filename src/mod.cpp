@@ -1,3 +1,13 @@
+#include <algorithm>
+#include <cassert>
+#include <cstdint>
+#include <cstring>
+#include <random>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <vector>
+
 #include "mods/service.hpp"
 #include "mods/svc/game_mode.h"
 #include "mods/svc/hook.hpp"
@@ -12,10 +22,6 @@
 #include "f_op/f_op_actor_mng.h"
 
 #include "entrance_definitions.hpp"
-
-#include <algorithm>
-#include <assert.h>
-#include <random>
 
 DEFINE_MOD();
 
