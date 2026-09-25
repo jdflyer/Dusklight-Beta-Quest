@@ -162,6 +162,7 @@ static HookAction dComIfGp_setNextStage_pre(ModContext *ctx, void *args, void *,
     i_stage = entry.mStageName;
     i_roomNo = entry.mRoomNo;
     i_point = entry.mPoint;
+    i_layer = -1; // Allow the game to auto-set the new room's layer
 
     // Override wolf dig hole entrances
     if ((lastMode & 0xF) == 9) {
@@ -194,12 +195,15 @@ static ModResult onNewSave(void *, ModError *) {
         break;
     case SWORD_WOODEN:
         dComIfGs_setSelectEquipSword(dItemNo_WOOD_STICK_e);
+        dComIfGs_setCollectSword(COLLECT_WOODEN_SWORD);
         break;
     case SWORD_ORDON:
         dComIfGs_setSelectEquipSword(dItemNo_SWORD_e);
+        dComIfGs_setCollectSword(COLLECT_ORDON_SWORD);
         break;
     case SWORD_MASTER:
         dComIfGs_setSelectEquipSword(dItemNo_MASTER_SWORD_e);
+        dComIfGs_setCollectSword(COLLECT_MASTER_SWORD);
         break;
     }
 
@@ -270,19 +274,34 @@ static ModResult onSaveLoad(void *, ModError *) {
     entranceMap = {};
 
     size_t saveSize = sizeof(BetaQuestSaveSettings);
-    svc_save->get_blob(mod_ctx, SETTINGS_SAVE_BLOB, &saveSettings, &saveSize);
-    assert(saveSize == sizeof(BetaQuestSaveSettings));
-    assert(saveSettings.version == 1);
+    if (svc_save->get_blob(mod_ctx, SETTINGS_SAVE_BLOB, &saveSettings, &saveSize) != MOD_OK) {
+        return MOD_ERROR;
+    }
+    if (saveSize != sizeof(BetaQuestSaveSettings) || saveSettings.version != 1) {
+        return MOD_ERROR;
+    }
 
     size_t entranceDataSize = 0;
-    svc_save->get_blob(mod_ctx, ENTRANCE_ARRAY_SAVE_BLOB, nullptr, &entranceDataSize);
-    assert(entranceDataSize >= sizeof(BetaQuestBinaryEntranceData));
+    if (svc_save->get_blob(mod_ctx, ENTRANCE_ARRAY_SAVE_BLOB, nullptr, &entranceDataSize) != MOD_OK) {
+        return MOD_ERROR;
+    }
+    if (entranceDataSize < sizeof(BetaQuestBinaryEntranceData)) {
+        return MOD_ERROR;
+    }
     std::vector<uint8_t> binaryData(entranceDataSize);
     const BetaQuestBinaryEntranceData &entranceData = *(BetaQuestBinaryEntranceData *)binaryData.data();
-    svc_save->get_blob(mod_ctx, ENTRANCE_ARRAY_SAVE_BLOB, binaryData.data(), &entranceDataSize);
-    assert(entranceData.version == 1);
-    assert(entranceDataSize ==
-           sizeof(BetaQuestBinaryEntranceData) + sizeof(entranceData.entries[0]) * entranceData.entryNum);
+    if (svc_save->get_blob(mod_ctx, ENTRANCE_ARRAY_SAVE_BLOB, binaryData.data(), &entranceDataSize) != MOD_OK) {
+        return MOD_ERROR;
+    }
+    if (entranceData.version != 1 || entranceDataSize != sizeof(BetaQuestBinaryEntranceData) +
+                                                             sizeof(entranceData.entries[0]) * entranceData.entryNum) {
+        return MOD_ERROR;
+    }
+
+    if (entranceData.entryNum == 0) {
+        // For whatever reason our header is valid, but we don't have any saved entrances
+        return MOD_OK;
+    }
 
     // Our mapping from entrance to entrance is to always map the current entrance to the one earlier in the list
     for (int i = 1; i < entranceData.entryNum; i++) {
@@ -435,7 +454,6 @@ ModResult onGamemodeActivated(void *, ModError *outError) {
     HOOK_ADD_PRE(procGrassWhistleWait, grassWhistlePre);
     HOOK_ADD_PRE(stage_playerInit, hookPreStagePlayerInit);
 
-
     UiMenuTabDesc desc = UI_MENU_TAB_DESC_INIT;
     desc.label = "Beta Quest";
     desc.on_selected = [](ModContext *ctx, void *user_data) {
@@ -477,6 +495,7 @@ ModResult onGamemodeActivated(void *, ModError *outError) {
 ModResult onGamemodeDeactivated(void *, ModError *) {
     HOOK_UNINSTALL(setNextStage)
     HOOK_UNINSTALL(procGrassWhistleWait)
+    HOOK_UNINSTALL(stage_playerInit);
 
     svc_ui->unregister_menu_tab(mod_ctx, g_modtab);
 
